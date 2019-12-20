@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="description"  content="">
+    <meta name="keywords"  content="">
+    <link rel="icon" href="favicon.png" type="image/x-icon">
+    <title>首页</title>
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/index.css" rel="stylesheet">
+    <link href="/css/ext/display.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/ext/vue.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/ext/axios.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/index.js" charset="utf-8"></script>
+</head>
+<body>
+    <div class="app" id="app">
+        <el-row :gutter="0" class="header">
+            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <div class="herader-title">
+                    {{info.title}}
+                    <div class="herader-second">{{info.sentence}}</div>
+                </div>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="0" class="hidden-xs-only menus">
+            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <div class="menu">
+                    <el-button type="primary"><i class="el-icon-house"></i>首页</el-button>
+                    <el-button><i class="el-icon-menu"></i>分类</el-button>
+                    <el-button><i class="el-icon-s-management"></i>日志</el-button>
+                </div>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="0" class="hidden-sm-and-up menus">
+            <div class="menu">
+                <el-button @click="drawer = true" icon="el-icon-menu" plain>菜单</el-button>
+            </div>
+
+            <el-drawer title="菜单" :visible.sync="drawer" :direction="direction" :with-header="false" size="100%">
+                <div class="menu menu-heard">
+                    菜单
+                </div>
+                <el-divider></el-divider>
+                <div class="menu">
+                    <el-button type="primary"><i class="el-icon-house"></i>首页</el-button>
+                </div>
+                <div class="menu">
+                    <el-button><i class="el-icon-menu"></i>分类</el-button>
+                </div>
+                <div class="menu">
+                    <el-button><i class="el-icon-s-management"></i>日志</el-button>
+                </div>
+                <div class="menu">
+                    <el-button @click="drawer = false" type="danger" icon="el-icon-close">关闭</el-button>
+                </div>
+            </el-drawer>
+        </el-row>
+
+        <el-row class="article" v-loading="loading">
+            <el-col :xs="{span:22,offset:1}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <div class="article-list">
+                    <el-card class="article-item"　shadow="hover" v-for="article in article_list" :key="article">
+                        <div slot="header" class="article-item-header">
+                            <el-button-group>
+                                <el-button type="primary" size="small" plain round>随手笔记</el-button>
+                                <el-button type="primary" size="small" plain round>php</el-button>
+                            </el-button-group>
+                            <el-button style="float: right; padding: 8px 0px;" type="text">全文速览</el-button>
+                        </div>
+                        <div class="article-item-content">
+                            <el-link :underline="false" type="info"><div class="article-item-content-title">文章大标题</div></el-link>
+                            <div class="article-item-content-simple">文章描述文章描述文章描述文章描述文章描述文章描述</div>
+                            <div class="article-item-content-info">
+                                <span class="interval"><el-link icon="el-icon-date" :underline="false" type="info">2019-12-12</el-link></span>
+                                <span class="interval"><el-link icon="el-icon-view" :underline="false" type="info">10w+</el-link></span>
+                            </div>
+                        </div>
+                    </el-card>
+                </div>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="0">
+            <el-col :xs="{span:22,offset:1}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <div class="footer">
+                    {{footer.copyright}}
+                    <a href="http://www.beian.miit.gov.cn" target="_blank">/{{footer.record}}</a>
+                </div>
+            </el-col>
+        </el-row>
+
+        <template>
+            <el-backtop></el-backtop>
+        </template>
+    </div>
+</body>
+<script type="text/javascript">
+    new Vue({
+        el: '#app',
+        data: {
+            info:{title:"乡村野娃", sentence:"读书、思考、践行"},
+            loading:false,
+            drawer: false,
+            direction: 'ltr',
+            article_list:[0,1,2],
+            footer:{copyright: "乡村野娃版权©2019", record:"湘ICP备18008664-2", }
+        },
+        methods: {
+            load() {
+                let len = this.article_list.length;
+                console.log(this.article_list.length);
+                if(this.article_list.length < 50){
+                    this.article_list.push(len);
+                }
+
+            }
+        }
+    })
+</script>
+</html>
