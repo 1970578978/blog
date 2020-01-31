@@ -13,7 +13,7 @@ class Router extends AbstractRouter
 //        $this->setGlobalMode(true);                 //只有关闭这个才能往后传值
 
         $routeCollector->get('/', '/Index');
-        $routeCollector->get('/test', '/aaa');
+        $routeCollector->get('/test', '/Index/test');
 
 
 

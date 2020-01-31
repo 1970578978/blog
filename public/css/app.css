@@ -70,3 +70,7 @@
     text-underline: none;
     color: #C0C4CC;
 }
+
+[v-cloak] {
+    display: none;
+}

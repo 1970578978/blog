@@ -19,16 +19,16 @@
     <div class="app" id="app">
         <el-row :gutter="0" class="header">
             <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
-                <div class="herader-title">
-                    {{info.title}}
-                    <div class="herader-second">{{info.sentence}}</div>
+                <div class="herader-title" >
+                    <span v-text="info.title"></span>
+                    <span class="herader-second" v-text="info.sentence"></span>
                 </div>
             </el-col>
         </el-row>
 
         <el-row :gutter="0" class="hidden-xs-only menus">
             <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
-                <div class="menu">
+                <div class="menu" v-cloak>
                     <el-button type="primary"><i class="el-icon-house"></i>首页</el-button>
                     <el-button><i class="el-icon-menu"></i>分类</el-button>
                     <el-button><i class="el-icon-s-management"></i>日志</el-button>
@@ -36,7 +36,7 @@
             </el-col>
         </el-row>
 
-        <el-row :gutter="0" class="hidden-sm-and-up menus">
+        <el-row :gutter="0" class="hidden-sm-and-up menus" v-cloak>
             <div class="menu">
                 <el-button @click="drawer = true" icon="el-icon-menu" plain>菜单</el-button>
             </div>
@@ -61,7 +61,7 @@
             </el-drawer>
         </el-row>
 
-        <el-row class="article" v-loading="loading">
+        <el-row class="article" v-loading="loading" v-cloak>
             <el-col :xs="{span:22,offset:1}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
                 <div class="article-list">
                     <el-card class="article-item"　shadow="hover" v-for="article in article_list" :key="article">
@@ -88,8 +88,8 @@
         <el-row :gutter="0">
             <el-col :xs="{span:22,offset:1}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
                 <div class="footer">
-                    {{footer.copyright}}
-                    <a href="http://www.beian.miit.gov.cn" target="_blank">/{{footer.record}}</a>
+                    <span v-text="footer.copyright"></span>
+                    <a href="http://www.beian.miit.gov.cn" target="_blank">/<span v-text="footer.record"></span></a>
                 </div>
             </el-col>
         </el-row>

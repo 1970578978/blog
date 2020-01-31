@@ -19,5 +19,10 @@ return [
         ]
     ],
     'TEMP_DIR' => null,
-    'LOG_DIR' => null
+    'LOG_DIR' => null,
+
+    //文档所在目录
+    'APP' => [
+        'dir' => 'public/docs',
+    ]
 ];
