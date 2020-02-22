@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "76d85285e6eb28cd4dec5686a791a014",
+    "content-hash": "f0a20c0e76eef5175cb8a3dcaf33f924",
     "packages": [
         {
             "name": "dragonmantank/cron-expression",

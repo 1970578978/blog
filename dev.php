@@ -23,6 +23,6 @@ return [
 
     //文档所在目录
     'APP' => [
-        'dir' => 'public/docs',
+        'dir' => EASYSWOOLE_ROOT.'/public/docs',
     ]
 ];

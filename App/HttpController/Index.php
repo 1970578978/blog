@@ -3,11 +3,13 @@
 
 namespace App\HttpController;
 
-
-use EasySwoole\EasySwoole\EasySwooleEvent;
 use EasySwoole\Http\AbstractInterface\Controller;
 use Swoole\Coroutine\System;
 use EasySwoole\Component\WaitGroup;
+use EasySwoole\EasySwoole\Config;
+use EasySwoole\Rpc\Response;
+use EasySwoole\Rpc\Rpc;
+use App\DocsSys\ReadDocs;
 
 class Index extends Controller
 {
@@ -30,7 +32,28 @@ class Index extends Controller
 
     function test()
     {
-
+       /*
+        $ret = [];
+        $client = Rpc::getInstance()->client();
+        $client->addCall('articles','list',['page'=>1])
+            ->setOnSuccess(function (Response $response)use(&$ret){
+                $ret['goods'] = $response->toArray();
+            })->setOnFail(function (Response $response)use(&$ret){
+                $ret['goods'] = $response->toArray();
+            });
+        $client->exec(2.0);
+        $this->writeJson(200,$ret);
+        */
+        //ReadDocs::getInstance()->readDocsList();
+        //$con = ReadDocs::getInstance()->gitInit();
+        //ReadDocs::getInstance()->setClassName();
+        //var_dump(ReadDocs::getInstance()->getClassName(0,0));
+        //$num = ReadDocs::getInstance()->saveDocs();
+ReadDocs::getInstance()->delDocs(0);
+        $num = ReadDocs::getInstance()->getDocs();
+        var_dump($num);
+        //$this->response()->write($num);
+       // $this->writeJson(200,$con);
     }
 
     protected function actionNotFound(?string $action)
