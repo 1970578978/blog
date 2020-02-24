@@ -5,29 +5,37 @@ namespace App\HttpController;
 
 use EasySwoole\Http\AbstractInterface\Controller;
 use Swoole\Coroutine\System;
+use EasySwoole\Http\Message\Status;
 use EasySwoole\Component\WaitGroup;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\Rpc\Response;
 use EasySwoole\Rpc\Rpc;
 use App\DocsSys\ReadDocs;
+use Parsedown;
 
 class Index extends Controller
 {
 
     function index()
     {
-
         $file = EASYSWOOLE_ROOT.'/public/index.html';
-        $wait = new WaitGroup();
+        $html = System::readFile($file);
+        $this->response()->write($html);
+        // return "/test";
+    }
 
-        $wait->add();
-        go(function ()use($wait,$file){
-            $html = System::readFile($file);
-            $this->response()->write($html);
-            $wait->done();
-        });
-        $wait->wait();
+    function docs()
+    {
+        $file = EASYSWOOLE_ROOT.'/public/doc.html';
+        $html = System::readFile($file);
+        $this->response()->write($html);
+    }
 
+    function content()
+    {
+        $text = ReadDocs::getInstance()->readContent("notes/mess/ubuntu 16.04 server Selenium环境搭建.md");
+        $html = Parsedown::instance()->text($text); 
+        $this->writeJson(200, $html);
     }
 
     function test()
@@ -49,17 +57,11 @@ class Index extends Controller
         //ReadDocs::getInstance()->setClassName();
         //var_dump(ReadDocs::getInstance()->getClassName(0,0));
         //$num = ReadDocs::getInstance()->saveDocs();
-ReadDocs::getInstance()->delDocs(0);
+        //ReadDocs::getInstance()->delDocs(0);
         $num = ReadDocs::getInstance()->getDocs();
         var_dump($num);
         //$this->response()->write($num);
        // $this->writeJson(200,$con);
     }
 
-    protected function actionNotFound(?string $action)
-    {
-        $this->response()->withStatus(404);
-        $file = EASYSWOOLE_ROOT.'/public/error/404.html';
-        $this->response()->write(file_get_contents($file));
-    }
 }

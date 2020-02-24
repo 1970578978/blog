@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="description"  content="">
+    <meta name="keywords"  content="">
+    <link rel="icon" href="favicon.png" type="image/x-icon">
+    <title>文档标题</title>
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/index.css" rel="stylesheet">
+    <link href="/css/ext/display.css" rel="stylesheet">
+    <link href="/css/ext/vue.css" rel="stylesheet">
+    <link href="/css/ext/a11y-light.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/ext/vue.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/ext/axios.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/index.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/ext/highlight.pack.js" charset="utf-8"></script>
+</head>
+<body>
+   <div class="app" id="app">
+        <el-row :gutter="0" class="header">
+            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <div class="herader-title" >
+                    <span v-text="info.title"></span>
+                    <span class="herader-second" v-text="info.sentence"></span>
+                </div>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="0" class="hidden-xs-only menus">
+            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <div class="menu" v-cloak>
+                    <el-button type="primary"><i class="el-icon-house"></i>首页</el-button>
+                    <el-button><i class="el-icon-menu"></i>分类</el-button>
+                    <el-button><i class="el-icon-s-management"></i>日志</el-button>
+                </div>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="0" class="hidden-sm-and-up menus" v-cloak>
+            <div class="menu">
+                <el-button @click="drawer = true" icon="el-icon-menu" plain>菜单</el-button>
+            </div>
+
+            <el-drawer title="菜单" :visible.sync="drawer" :direction="direction" :with-header="false" size="100%">
+                <div class="menu menu-heard">
+                    菜单
+                </div>
+                <el-divider></el-divider>
+                <div class="menu">
+                    <el-button type="primary"><i class="el-icon-house"></i>首页</el-button>
+                </div>
+                <div class="menu">
+                    <el-button><i class="el-icon-menu"></i>分类</el-button>
+                </div>
+                <div class="menu">
+                    <el-button><i class="el-icon-s-management"></i>日志</el-button>
+                </div>
+                <div class="menu">
+                    <el-button @click="drawer = false" type="danger" icon="el-icon-close">关闭</el-button>
+                </div>
+            </el-drawer>
+        </el-row>
+    </div> 
+
+    <div class="content" id="content">
+        <el-row class="article" v-loading="loading" v-cloak>
+            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <el-card class="article-item"　shadow="never" >
+                    <div v-html="content"></div>
+                  
+                </el-card>
+            </el-col>
+        </el-row>
+        <template>
+            <el-backtop></el-backtop>
+        </template>
+    </div>
+
+    <div class="com-form" id="com-form">
+        <el-row>
+            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <el-card class="com-form" shadow="hover">
+                    <el-form ref="form" :model="form" label-width="80px" label-position="left">
+                        <el-form-item label="昵称">
+                            <el-popconfirm
+                            confirm-button-text='确定'
+                            cancel-button-text='好的'
+                            confirm-button-type="text"
+                            icon="el-icon-info"
+                            icon-color="red"
+                            title="昵称创建后不能更改"
+                            >
+                            <el-input v-model="form.name" :disabled="havname"  placeholder="游客××××" slot="reference"maxlength="10"></el-input>
+                            </el-popconfirm>
+                        </el-form-item>
+                        <el-form-item label="发表评论">
+                            <el-input type="textarea" v-model="form.comment"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="onSubmit">提交评论</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-card>
+            </el-col>
+        </el-row>
+    </div>
+
+    
+    
+
+    <div class="comment" id = "comment">
+        <el-row>
+            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <div class="comtext" v-text="comment"></div>
+            </el-col>
+        </el-row>
+
+        <el-row v-loading="loading" v-cloak>
+            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                <div class="com-list">
+                    <el-card class="com" shadow="hover" v-for="com in com_list" :key="com">
+                        <div class="com-item">
+                            <p class="com-people">
+                                <span>某某某某某某某某某</span>
+                                <span class="com-time">2019-2-18</span>
+                                <el-link :underline="false" class="com-praise"><img src="img/praise.png"></el-link>
+                                <!-- <el-link :underline="false" class="com-praise"><img src="img/nopraise.png"></el-link> -->
+                            </p>
+                
+                            <p class="com_con" @click="toreply = true">评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论</p>
+                            <el-col :span="22" :offset="1">
+                                <div class="reply" v-for="reply in [0,1,2]" :key="reply">
+                                    <el-divider></el-divider>
+                                    <p class="com-people">
+                                        <span>某某某某某某某某某</span>
+                                        <span>@</span>
+                                        <span>某某某某某某某某某</span>
+                                        <span class="com-time">2019-2-18</span>
+                                        <el-link :underline="false" class="com-praise"><img src="img/praise.png"></el-link>
+                                        <!-- <el-link :underline="false" class="com-praise"><img src="img/nopraise.png"></el-link> -->
+                                    </p>
+                                    <p class="com_con" @click="toreply = true">内容内容内容内容内容内容内容内容内容</p>
+                                </div>
+                            </el-col>
+                        </div>
+                    </el-card>
+                </div>
+            </el-col>
+        </el-row>
+
+        <div  class="reply-form" id="reply-form" >
+            <div class="reply-bc" @click="toreply = false" v-show="toreply"></div>
+            <el-collapse-transition>
+                <div class="reply-bc-in" v-show="toreply">
+                        <el-row>
+                        <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
+                            <el-card class="reply-form" shadow="hover">
+                                <el-form ref="reply_form" :model="reply_form" label-position="left" :inline="true">
+                                    <el-form-item label="昵称" v-show="!havname">
+                                        <el-popconfirm
+                                        confirm-button-text='确定'
+                                        cancel-button-text='好的'
+                                        confirm-button-type="text"
+                                        icon="el-icon-info"
+                                        icon-color="red"
+                                        title="昵称创建后不能更改"
+                                        >
+                                        <el-input v-model="reply_form.name" :disabled="havname"  placeholder="游客××××" slot="reference"maxlength="10"></el-input>
+                                        </el-popconfirm>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-input type="textarea" rows="1" v-model="reply_form.reply" placeholder="@某某" ></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" @click="onSubmit" icon="el-icon-s-promotion" size="small"></el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-card>
+                        </el-col>
+                    </el-row>
+                </div>
+            </el-collapse-transition>
+        </div>
+    </div>
+
+    <div class="footer" id="footer">
+        <footer-rwb></footer-rwb>
+    </div>
+
+
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            info:{title:"乡村野娃", sentence:"读书、思考、践行"},
+            loading:false,
+            drawer: false,
+            direction: 'ltr',
+        }
+    });
+
+    var doc = new Vue({
+                el:'#content',
+                data:{
+                    loading:false,
+                    content:"",
+                }
+            });
+    axios.get('/con')
+        .then(function (response) {
+            var text = response.data.result;
+            doc.content = text;
+            hljs.initHighlightingOnLoad();
+        })
+        .catch(function (error) {
+            doc.$message({
+                showClose: true,
+                message: '加载失败，请稍后再试！',
+                type: 'error'
+            });
+  });
+ 
+  var form = new Vue({
+    el:"#com-form",
+    data:{
+        havname: true,
+        form:{
+            name:"某某某",
+            comment:""
+        }
+    },
+
+    methods: {
+      onSubmit() {
+        console.log('submit!');
+      }
+    }
+  });
+
+    var comment = new Vue({
+        el: '#comment',
+        data: {
+            comment:"热门评论：",
+            loading:false,
+            com_list:[0,1,2],
+            havname: true,
+            toreply:false,
+            reply_form:{
+                name:"某某某",
+                reply:""
+            },
+        },
+        methods: {
+            onSubmit() {
+                console.log('submit!');
+            }
+        }
+    });
+
+</script>
+<script type="text/javascript" src="/js/footer.js" charset="utf-8"></script>
+</html>

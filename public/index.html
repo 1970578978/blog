@@ -11,6 +11,7 @@
     <link href="/css/app.css" rel="stylesheet">
     <link href="/css/index.css" rel="stylesheet">
     <link href="/css/ext/display.css" rel="stylesheet">
+    <link href="/css/ext/vue.css" rel="stylesheet">
     <script type="text/javascript" src="/js/ext/vue.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/ext/axios.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/index.js" charset="utf-8"></script>
@@ -85,18 +86,13 @@
             </el-col>
         </el-row>
 
-        <el-row :gutter="0">
-            <el-col :xs="{span:22,offset:1}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
-                <div class="footer">
-                    <span v-text="footer.copyright"></span>
-                    <a href="http://www.beian.miit.gov.cn" target="_blank">/<span v-text="footer.record"></span></a>
-                </div>
-            </el-col>
-        </el-row>
-
         <template>
             <el-backtop></el-backtop>
         </template>
+    </div>
+
+    <div class="footer" id="footer">
+        <footer-rwb></footer-rwb>
     </div>
 </body>
 <script type="text/javascript">
@@ -108,18 +104,19 @@
             drawer: false,
             direction: 'ltr',
             article_list:[0,1,2],
-            footer:{copyright: "乡村野娃版权©2019", record:"湘ICP备18008664-2", }
         },
         methods: {
             load() {
                 let len = this.article_list.length;
-                console.log(this.article_list.length);
                 if(this.article_list.length < 50){
                     this.article_list.push(len);
                 }
 
             }
         }
-    })
+    });
+
+
 </script>
+<script type="text/javascript" src="/js/footer.js" charset="utf-8"></script>
 </html>

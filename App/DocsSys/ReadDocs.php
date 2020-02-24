@@ -200,4 +200,14 @@ class ReadDocs
             return true;
         }
     }
+
+    /**
+     * 读取指定文档的内容
+     */
+    public function readContent(string $path) : string
+    {
+        $doc = $this->doc_dir."/".$path;
+        $content = System::readFile($doc);
+        return $content;
+    }
 }

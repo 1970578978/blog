@@ -5,18 +5,33 @@ use EasySwoole\Http\AbstractInterface\AbstractRouter;
 use FastRoute\RouteCollector;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
+use EasySwoole\Http\Message\Status;
 
 class Router extends AbstractRouter
 {
     function initialize(RouteCollector $routeCollector)
     {
-//        $this->setGlobalMode(true);                 //只有关闭这个才能往后传值
+       $this->setGlobalMode(true);                 //只有关闭这个才能往后传值
 
         $routeCollector->get('/', '/Index');
         $routeCollector->get('/test', '/Index/test');
+        $routeCollector->get('/docs', '/Index/docs');
+        $routeCollector->get('/con', '/Index/content');
 
 
+        $this->setRouterNotFoundCallBack(function (Request $request,Response $response){
+            $response->withStatus(Status::CODE_NOT_FOUND);
+            $file = EASYSWOOLE_ROOT.'/public/error/404.html';
+            $response->write(file_get_contents($file));
+            return false;
+        });
 
+        $this->setMethodNotAllowCallBack(function (Request $request,Response $response){
+            $response->withHeader('Content-type', 'application/json;charset=utf-8');
+            $response->withStatus(Status::CODE_METHOD_NOT_ALLOWED);
+            return false;
+        });
+        
 //        $routeCollector->get('/user', '/inde.html');
 //        $routeCollector->get('/rpc', '/Rpc/index');
 //        $routeCollector->get('/a', '/index/index');

@@ -1,7 +1,6 @@
 * {
     padding: 0;
     margin: 0;
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 
 .herader-title {
@@ -73,4 +72,75 @@
 
 [v-cloak] {
     display: none;
+}
+
+pre {
+    padding: 1em;
+    border: 1px solid #EBEEF5;
+    background-color: #FFF;
+    -webkit-transition: .3s;
+    transition: .3s;
+}
+
+@media only screen and (min-width: 767px){
+    html {
+        font-size: 18px;
+    }
+}
+
+.comtext {
+    margin: 1em 0;
+    padding-left: 1em;
+}
+.com {
+    margin: 0.5em 0;
+}
+
+.com-people {
+    font-size: 0.8em;
+    color: darkgray;
+}
+.com-time {
+    
+    margin-left: 2em;
+}
+
+.com-praise {
+    float: right;
+    margin-right: 2em;
+}
+.com-praise  img{
+    width: 1.3em;
+    height: 1.3em;
+}
+
+.com-form {
+    margin: 1em 0;
+}
+
+.comment {
+    margin-bottom: 2em;
+}
+
+.reply-bc {
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.reply-bc-in {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    z-index: 21;
+}
+
+.com_con {
+    cursor: pointer;
 }
