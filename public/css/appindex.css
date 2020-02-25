@@ -1,0 +1,46 @@
+.article-list {
+    margin-bottom: 2em;
+}
+.article-item {
+    margin-top: 1em;
+}
+.article-item-content-title {
+    font-size: 1.5em;
+}
+.article-item-content-simple {
+    margin-top: 1em;
+}
+.article-item-content-info {
+    margin-top: 1em;
+}
+.interval {
+    margin-right: 10px;
+}
+
+.more {
+    margin: 1em 0;
+}
+
+@media only screen and (min-width: 767px){
+    .more-text {
+        display: inline;
+    }
+    .more-page {
+        float: right;
+    }
+}
+
+@media only screen and (max-width: 768px){
+    .more-text {
+        width: 100%;
+        text-align: center;
+    }
+    .more-page {
+        margin: 1em 0;
+        text-align: center;
+    }
+}
+
+.loading {
+    height: 1em;
+}

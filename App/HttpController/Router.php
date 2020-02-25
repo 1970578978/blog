@@ -16,9 +16,15 @@ class Router extends AbstractRouter
         $routeCollector->get('/', '/Index');
         $routeCollector->get('/test', '/Index/test');
         $routeCollector->get('/docs', '/Index/docs');
-        $routeCollector->get('/con', '/Index/content');
+
+        $routeCollector->addGroup('/data',function (RouteCollector $collector){
+            $collector->get("/list/{start:\d+}[/{len:\d+}]", "/Docs/getDocsList");
+            $collector->get('/con/{id:\d+}', '/Index/content');
+        });
+            
 
 
+        //公共的404和405处理方式
         $this->setRouterNotFoundCallBack(function (Request $request,Response $response){
             $response->withStatus(Status::CODE_NOT_FOUND);
             $file = EASYSWOOLE_ROOT.'/public/error/404.html';

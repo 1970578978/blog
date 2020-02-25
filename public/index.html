@@ -8,7 +8,8 @@
     <meta name="keywords"  content="">
     <link rel="icon" href="favicon.png" type="image/x-icon">
     <title>首页</title>
-    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/comm/app.css" rel="stylesheet">
+    <link href="/css/appindex.css" rel="stylesheet">
     <link href="/css/index.css" rel="stylesheet">
     <link href="/css/ext/display.css" rel="stylesheet">
     <link href="/css/ext/vue.css" rel="stylesheet">
@@ -17,73 +18,55 @@
     <script type="text/javascript" src="/js/index.js" charset="utf-8"></script>
 </head>
 <body>
-    <div class="app" id="app">
-        <el-row :gutter="0" class="header">
-            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
-                <div class="herader-title" >
-                    <span v-text="info.title"></span>
-                    <span class="herader-second" v-text="info.sentence"></span>
-                </div>
-            </el-col>
-        </el-row>
+    <div class="header" id="header">
+        <header-app></header-app>
+    </div>
 
-        <el-row :gutter="0" class="hidden-xs-only menus">
-            <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
-                <div class="menu" v-cloak>
-                    <el-button type="primary"><i class="el-icon-house"></i>首页</el-button>
-                    <el-button><i class="el-icon-menu"></i>分类</el-button>
-                    <el-button><i class="el-icon-s-management"></i>日志</el-button>
-                </div>
-            </el-col>
-        </el-row>
-
-        <el-row :gutter="0" class="hidden-sm-and-up menus" v-cloak>
-            <div class="menu">
-                <el-button @click="drawer = true" icon="el-icon-menu" plain>菜单</el-button>
-            </div>
-
-            <el-drawer title="菜单" :visible.sync="drawer" :direction="direction" :with-header="false" size="100%">
-                <div class="menu menu-heard">
-                    菜单
-                </div>
-                <el-divider></el-divider>
-                <div class="menu">
-                    <el-button type="primary"><i class="el-icon-house"></i>首页</el-button>
-                </div>
-                <div class="menu">
-                    <el-button><i class="el-icon-menu"></i>分类</el-button>
-                </div>
-                <div class="menu">
-                    <el-button><i class="el-icon-s-management"></i>日志</el-button>
-                </div>
-                <div class="menu">
-                    <el-button @click="drawer = false" type="danger" icon="el-icon-close">关闭</el-button>
-                </div>
-            </el-drawer>
-        </el-row>
-
-        <el-row class="article" v-loading="loading" v-cloak>
+    <div class="list" id="list">
+        <el-row class="article" v-cloak>
             <el-col :xs="{span:22,offset:1}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
                 <div class="article-list">
-                    <el-card class="article-item"　shadow="hover" v-for="article in article_list" :key="article">
+                    <el-card class="article-item" shadow="hover" v-for="article in article_list" :key="article.id">
                         <div slot="header" class="article-item-header">
                             <el-button-group>
-                                <el-button type="primary" size="small" plain round>随手笔记</el-button>
-                                <el-button type="primary" size="small" plain round>php</el-button>
+                                <el-button type="primary" size="small" plain round v-text="article.nature_class"></el-button>
+                                <el-button type="primary" size="small" plain round v-text="article.content_class"></el-button>
                             </el-button-group>
                             <el-button style="float: right; padding: 8px 0px;" type="text">全文速览</el-button>
                         </div>
                         <div class="article-item-content">
-                            <el-link :underline="false" type="info"><div class="article-item-content-title">文章大标题</div></el-link>
-                            <div class="article-item-content-simple">文章描述文章描述文章描述文章描述文章描述文章描述</div>
+                            <el-link :underline="false" type="info"><div class="article-item-content-title" v-text="article.title"></div></el-link>
+                            <div class="article-item-content-simple" v-text="article.descr"></div>
                             <div class="article-item-content-info">
-                                <span class="interval"><el-link icon="el-icon-date" :underline="false" type="info">2019-12-12</el-link></span>
-                                <span class="interval"><el-link icon="el-icon-view" :underline="false" type="info">10w+</el-link></span>
+                                <span class="interval"><el-link icon="el-icon-date" :underline="false" type="info">{{timef(article.ctime)}}</el-link></span>
+                                <span class="interval"><el-link icon="el-icon-view" :underline="false" type="info">{{watchf(article.watch)}}</el-link></span>
                             </div>
                         </div>
                     </el-card>
+                    <el-card class="article-item" shadow="always" v-show="loading">
+                        <div class="loading" element-loading-text="拼命加载中"
+                        element-loading-spinner="el-icon-loading" v-loading="loading" ></div>
+                    </el-card>
+                    <el-row class="more" v-cloak>
+                            <div class="more-text" v-show="!displayAll">
+                                <el-button type="primary" size="small" @click="getMoreList">更多</el-button>
+                            </div>
+                            <div class="more-page">
+                                <el-pagination
+                                background
+                                hide-on-single-page
+                                layout="prev, pager, next"
+                                :page-size="len"
+                                :pager-count="5"
+                                :total="allnum"
+                                @current-change="handleCurrentChange"
+                                >
+                            </el-pagination>
+                        </div>
+                    </el-row>
                 </div>
             </el-col>
+           
         </el-row>
 
         <template>
@@ -92,31 +75,122 @@
     </div>
 
     <div class="footer" id="footer">
-        <footer-rwb></footer-rwb>
+        <footer-app></footer-app>
     </div>
 </body>
+<script type="text/javascript" src="/js/comm/header.js" charset="utf-8"></script>
 <script type="text/javascript">
-    new Vue({
-        el: '#app',
-        data: {
-            info:{title:"乡村野娃", sentence:"读书、思考、践行"},
-            loading:false,
-            drawer: false,
-            direction: 'ltr',
-            article_list:[0,1,2],
-        },
-        methods: {
-            load() {
-                let len = this.article_list.length;
-                if(this.article_list.length < 50){
-                    this.article_list.push(len);
-                }
 
+    var list = new Vue({
+        el: '#list',
+        data:{
+            start: 0,
+            len:0,
+            morelen:3,
+            allnum:0,
+            displayAll:false,
+            loading:true,
+            article_list:[],
+        },
+        methods:{
+            getMoreList: function(){
+                if(list.loading == true) return;
+                list.loading = true;
+                axios.get('/data/list/' + list.start + '/' + list.morelen)
+                .then(function (response) {
+                    var data = response.data.result;
+                    if(data.length < list.morelen) list.displayAll = true;
+                    list.article_list.push.apply(list.article_list, data);
+                    list.len = list.article_list.length;
+                    list.start = list.article_list[list.len - 1].id;
+                    list.loading = false;
+                })
+                .catch(function (error) {
+                    list.$message({
+                        showClose: true,
+                        message: '加载失败，请稍后再试！',
+                        type: 'error'
+                    });
+                    list.loading = false;
+                });
+            },
+
+            handleCurrentChange: function(val) {
+                var s = (list.allnum - (val - 1) * list.len);
+                axios.get('/data/list/' + s + '/' + list.len)
+                .then(function (response) {
+                    var data = response.data.result;
+                    if(data.length < list.len){
+                        list.displayAll = true;
+                    }else{
+                        list.displayAll = false;
+                    }
+                    list.article_list = data;
+                    if(data.length == 0){
+                        list.$message({
+                            showClose: true,
+                            message: '没有更多了，感谢访问',
+                            type: 'success'
+                        });
+                    }else{
+                        list.start = data[data.length - 1].id;
+                    }
+                    list.loading = false;
+                })
+                .catch(function (error) {
+                    list.$message({
+                        showClose: true,
+                        message: '加载失败，请稍后再试！',
+                        type: 'error'
+                    });
+                    list.loading = false;
+                });
+            },
+
+            timef: function (ctime) {
+                ctime *= 1000;
+                ctime = new Date(ctime);
+                var year=ctime.getFullYear();                   //取得4位数的年份
+                var month=ctime.getMonth()+1;           //取得日期中的月份，其中0表示1月，11表示12月
+                var date=ctime.getDate();                          //返回日期月份中的天数（1到31)
+                return year + "-" + month + "-" + date;
+            },
+
+            watchf:function(watch){
+                if(watch < 1000){
+                    return watch;
+                }else if(watch < 10000){
+                    return Math.round(watch/1000) + "k";
+                }else{
+                    return Math.round(watch/10000) + "w";
+                }
             }
+        },
+        computed: {
+            
         }
     });
 
+    axios.get('/data/list/' + list.start)
+        .then(function (response) {
+            var data = response.data.result;
+            if(data.length < list.morelen) list.displayAll = true;
+            list.article_list.push.apply(list.article_list, data);
+            list.len = list.article_list.length;
+            list.start = list.article_list[list.len - 1].id;
+            list.allnum = list.article_list[0].id + 1;
+            list.loading = false;
+        })
+        .catch(function (error) {
+            list.$message({
+                showClose: true,
+                message: '加载失败，请稍后再试！',
+                type: 'error'
+            });
+            list.loading = false;
+  });
+
 
 </script>
-<script type="text/javascript" src="/js/footer.js" charset="utf-8"></script>
+<script type="text/javascript" src="/js/comm/footer.js" charset="utf-8"></script>
 </html>

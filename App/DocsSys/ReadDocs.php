@@ -22,14 +22,6 @@ class ReadDocs
 
     }
 
-    /**
-     * 每次访问调用的函数，检查需不需要初始化
-     * 
-     */
-    public function initRequest() : void
-    {
-        
-    }
 
 
     /**
@@ -61,7 +53,7 @@ class ReadDocs
     }
     
     /**
-     * 获取文档的类名
+     * 获取文档的分类
      */
     public function getClassName(int $nId, int $cId) : array
     {
@@ -136,18 +128,18 @@ class ReadDocs
     }
 
     /**
-     * 读取文档列表
+     * 读取redis中的文档列表
      * @param $start 文档起始id
      * @param 文档数量
      */
     public function getDocs(int $start = 0 , int $len = 3) : array
     {
         $redis = Redis::defer("redis");
-        if($start === 0){
-            $alllen = $redis->hLen($this->docs);
-        }else{
+        $alllen = $redis->hLen($this->docs);
+        if($start !== 0 && $start < $alllen){
             $alllen = $start;
         }
+
         $temp = [];
         while(count($temp) < $len && $alllen > 0){
             $temp[] = --$alllen;
@@ -160,6 +152,8 @@ class ReadDocs
         $ret = [];
         foreach($rett as $v){
             $v = json_decode($v, true);
+            $v["nature_class"] = $redis->hGet("nature_class", $v["nature_class"]);
+            $v["content_class"] = $redis->hGet("content_class", $v["content_class"]);
             if($v['status'] === 0){
                 $delnum++;
             }else{
@@ -171,12 +165,13 @@ class ReadDocs
         while($k < $delnum && $last >= 0){
             $temp = $redis->hGet($this->docs, $last);
             $temp = json_decode($temp, true);
-            if($temp['status'] === 0){
-                $last--;
-            }else{
+            if($temp['status'] !== 0){
                 $k++;
+                $temp["nature_class"] = $redis->hGet("nature_class", $temp["nature_class"]);
+                $temp["content_class"] = $redis->hGet("content_class", $temp["content_class"]);
                 $ret[] = $temp;
             }
+            $last--;
         }
 
         return $ret;
@@ -184,7 +179,7 @@ class ReadDocs
     }
 
     /**
-     * 删除指定文档
+     * 删除redis指定文档
      *@param int $id文档id
      */
     public function delDocs(int $id) : bool
@@ -209,5 +204,33 @@ class ReadDocs
         $doc = $this->doc_dir."/".$path;
         $content = System::readFile($doc);
         return $content;
+    }
+
+    /**
+     * 创造100条假数据并存入redis中
+     */
+    public function inTextData() : int
+    {
+        $list = [];
+        $redis = Redis::defer("redis");
+        $num = $redis->hLen($this->docs);
+        for($i = 0; $i < 100; $i++){
+            
+            $list[$i]['nature_class'] = rand(0,2);
+            $list[$i]['content_class'] = rand(0,4);
+            
+            $list[$i]['id'] = $num++;
+            $list[$i]['watch'] = 0;
+            $list[$i]['ctime'] = time();
+            $list[$i]['status'] = 1;
+            $list[$i]["dir"] = "notes/mess/ubuntu 16.04 server Selenium环境搭建.md";
+            $list[$i]["title"] = "ubuntu 16.04 server Selenium环境搭建简明教程";
+            $list[$i]["descr"] = "Selenium常用在ui自动化测试中，搭配浏览器可以完成很多功能，来看看怎么在ubuntu 16.04 server 中怎么搭建简单环境吧";
+        }
+
+        foreach($list as $v){
+            $redis->hSet($this->docs, $v['id'], json_encode($v));
+        }
+        return 0;
     }
 }

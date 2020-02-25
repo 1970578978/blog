@@ -58,8 +58,9 @@ class Index extends Controller
         //var_dump(ReadDocs::getInstance()->getClassName(0,0));
         //$num = ReadDocs::getInstance()->saveDocs();
         //ReadDocs::getInstance()->delDocs(0);
-        $num = ReadDocs::getInstance()->getDocs();
-        var_dump($num);
+        // $num = ReadDocs::getInstance()->delDocs(199);
+        // $num = ReadDocs::getInstance()->delDocs(197);
+        // var_dump($num);
         //$this->response()->write($num);
        // $this->writeJson(200,$con);
     }

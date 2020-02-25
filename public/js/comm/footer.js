@@ -1,4 +1,4 @@
-Vue.component('footer-rwb', {
+Vue.component('footer-app', {
     data: function () {
         return {
           footer:{copyright:"", record:"", link:""}
@@ -19,9 +19,6 @@ Vue.component('footer-rwb', {
 
 var foot = new Vue({
     el:"#footer",
-    data:{
-        footer:{copyright:"aaaaa", record:"bbbbb", link:""}
-    }
 });
 
 axios.get('/js/config/footer.json')

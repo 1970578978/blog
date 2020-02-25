@@ -2,6 +2,7 @@
 namespace App\RpcService;
 
 use EasySwoole\Rpc\AbstractService;
+use App\DocsSys\ReadDocs;
 
 class Articles extends AbstractService
 {
@@ -11,20 +12,13 @@ class Articles extends AbstractService
         return 'articles';
     }
 
-    public function list()
+    public function getDocsList()
     {
-        $this->response()->setResult([
-            [
-                'articleId'=>'100001',
-                'articleName'=>'学习的动力',
-                'prices'=>1124
-            ],
-            [
-                'articleId'=>'100002',
-                'articleName'=>'学习的方法',
-                'prices'=>599
-            ]
-        ]);
-        $this->response()->setMsg('get goods list success');
+        $arg = $this->request()->getArg();
+        $start = $arg['start'] ?? 0;
+        $len = $arg['len'] ?? 3;
+        $docs = ReadDocs::getInstance()->getDocs($start, $len);
+        $this->response()->setResult($docs);
+        $this->response()->setMsg('success');
     }
 }
