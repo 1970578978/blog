@@ -4,9 +4,15 @@ $data = [
     'request' => [
         'serviceName' => 'articles',
         'action' => 'docInit',//行为名称
-        'arg' => []
+        'arg' => [
+            "setclass" => false
+        ]
     ]
 ];
+
+if(isset($argv[1]) && $argv[1] === "1"){
+    $data['request']['arg']['setclass'] = true;
+}
 
 //$raw = serialize($data);//注意序列化类型,需要和RPC服务端约定好协议 $serializeType
 

@@ -82,7 +82,12 @@ class Articles extends AbstractService
      */
     public function docInit()
     {
-        $a = ReadDocs::getInstance()->gitInit();
+        $arg = $this->request()->getArg();
+        $setclass = $arg['setclass'];
+        if($setclass){
+            ReadDocs::getInstance()->setClassName();
+        }
+        ReadDocs::getInstance()->gitInit();
         $ret = ReadDocs::getInstance()->saveDocs();
         $this->response()->setResult($ret);
         $this->response()->setMsg('success');
