@@ -10,15 +10,13 @@ class ReadDocs
 {
     use Singleton;
 
-    public $conf_obj;
     public $doc_dir;
-    public $dirtable = "dirtable";
-    public $docs = "docs";
+    private $dirtable = "dirtable";
+    private $docs = "docs";
 
     public function __construct()
     {
-        $this->conf_obj = Config::getInstance();
-        $this->doc_dir = $this->conf_obj->getConf("APP.dir");
+        $this->doc_dir = Config::getInstance()->getConf("APP.dir");
 
     }
 
@@ -57,8 +55,8 @@ class ReadDocs
      */
     public function getClassName(int $nId, int $cId) : array
     {
-        $ret = [];
         $redis = Redis::defer('redis');
+        $ret = [];
         $ret[] = $redis->hGet("nature_class", $nId);
         $ret[] = $redis->hGet("content_class", $cId);
         return $ret;
@@ -86,7 +84,7 @@ class ReadDocs
      */
     public function getDocsNum() : int
     {
-        $redis = Redis::defer("redis");
+        $redis = Redis::defer('redis');
         $num = $redis->hLen($this->docs);
         return $num;
     }
@@ -96,8 +94,8 @@ class ReadDocs
      */
     public function saveDocs() : int
     {
+        $redis = Redis::defer('redis');
         $list = $this->readDocsList();
-        $redis = Redis::defer("redis");
         $num = $redis->hLen($this->docs);
         for($i = 0; $i < count($list); $i++){
             $doc = $list[$i];
@@ -197,13 +195,37 @@ class ReadDocs
     }
 
     /**
+     * 从redis中获取制定文档参数
+     */
+    public function getDoc(int $id) : array
+    {
+        $redis = Redis::defer('redis');
+        $v = $redis->hGet($this->docs, $id);
+        $v = json_decode($v, true);
+        return $v;
+    }
+
+    /**
+     * redis中设置制定文档参数
+     */
+    public function setDoc(int $id, array $doc) : bool
+    {
+        $redis = Redis::defer('redis');
+        $ret = $redis->hSet($this->docs, $id, json_encode($doc));
+        return $ret;
+    }
+
+    /**
      * 读取指定文档的内容
      */
-    public function readContent(string $path) : string
+    public function readContent(string $path) : ?string
     {
         $doc = $this->doc_dir."/".$path;
-        $content = System::readFile($doc);
-        return $content;
+        if(file_exists($doc)){
+            $content = System::readFile($doc);
+            return $content;
+        }
+            return null;
     }
 
     /**

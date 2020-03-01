@@ -7,7 +7,7 @@
     <meta name="description"  content="">
     <meta name="keywords"  content="">
     <link rel="icon" href="favicon.png" type="image/x-icon">
-    <title>首页</title>
+    <title></title>
     <link href="/css/comm/app.css" rel="stylesheet">
     <link href="/css/appindex.css" rel="stylesheet">
     <link href="/css/index.css" rel="stylesheet">
@@ -32,10 +32,10 @@
                                 <el-button type="primary" size="small" plain round v-text="article.nature_class"></el-button>
                                 <el-button type="primary" size="small" plain round v-text="article.content_class"></el-button>
                             </el-button-group>
-                            <el-button style="float: right; padding: 8px 0px;" type="text">全文速览</el-button>
+                            <el-button style="float: right; padding: 8px 0px;" type="text" @click="hrefto(article.id)">全文速览</el-button>
                         </div>
                         <div class="article-item-content">
-                            <el-link :underline="false" type="info"><div class="article-item-content-title" v-text="article.title"></div></el-link>
+                            <el-link :underline="false" type="info" @click="hrefto(article.id)"><div class="article-item-content-title" v-text="article.title"></div></el-link>
                             <div class="article-item-content-simple" v-text="article.descr"></div>
                             <div class="article-item-content-info">
                                 <span class="interval"><el-link icon="el-icon-date" :underline="false" type="info">{{timef(article.ctime)}}</el-link></span>
@@ -164,6 +164,10 @@
                 }else{
                     return Math.round(watch/10000) + "w";
                 }
+            },
+
+            hrefto(id){
+                window.location.href="/docs/"+id;
             }
         },
         computed: {

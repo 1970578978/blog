@@ -15,11 +15,16 @@ class Router extends AbstractRouter
 
         $routeCollector->get('/', '/Index');
         $routeCollector->get('/test', '/Index/test');
-        $routeCollector->get('/docs', '/Index/docs');
+        $routeCollector->get('/docs[/{id:\d+}]', '/Index/docs');
 
         $routeCollector->addGroup('/data',function (RouteCollector $collector){
             $collector->get("/list/{start:\d+}[/{len:\d+}]", "/Docs/getDocsList");
-            $collector->get('/con/{id:\d+}', '/Index/content');
+            $collector->get('/docinfo/{id:\d+}', '/Docs/Index');
+            $collector->get('/con/{id:\d+}', '/Docs/getCotent');
+            $collector->get('/user/name', '/Comment/Index');
+            $collector->get('/com/list', '/Comment/getComment');                        //获取评论列表
+            $collector->post('/comment/in', '/Comment/inComment');              //获插入评论
+            $collector->post('/reply/in', '/Comment/inReply');              //插入回复
         });
             
 

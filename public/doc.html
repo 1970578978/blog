@@ -6,8 +6,8 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
     <meta name="description"  content="">
     <meta name="keywords"  content="">
-    <link rel="icon" href="favicon.png" type="image/x-icon">
-    <title>文档标题</title>
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+    <title></title>
     <link href="/css/comm/app.css" rel="stylesheet">
     <link href="/css/appdocs.css" rel="stylesheet">
     <link href="/css/index.css" rel="stylesheet">
@@ -17,6 +17,7 @@
     <script type="text/javascript" src="/js/ext/vue.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/ext/axios.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/index.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/app.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/ext/highlight.pack.js" charset="utf-8"></script>
 </head>
 <body>
@@ -28,6 +29,7 @@
         <el-row class="article" v-loading="loading" v-cloak>
             <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
                 <el-card class="article-item"　shadow="never" >
+                    
                     <div v-html="content"></div>
                   
                 </el-card>
@@ -52,7 +54,7 @@
                             icon-color="red"
                             title="昵称创建后不能更改"
                             >
-                            <el-input v-model="form.name" :disabled="havname"  placeholder="游客××××" slot="reference"maxlength="10"></el-input>
+                            <el-input v-model="form.name" :disabled="havname"  placeholder="" slot="reference"maxlength="10"></el-input>
                             </el-popconfirm>
                         </el-form-item>
                         <el-form-item label="发表评论">
@@ -71,7 +73,7 @@
     
 
     <div class="comment" id = "comment">
-        <el-row>
+        <el-row v-show="havcomment">
             <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
                 <div class="comtext" v-text="comment"></div>
             </el-col>
@@ -80,28 +82,26 @@
         <el-row v-loading="loading" v-cloak>
             <el-col :xs="{span:24,offset:0}" :sm="{span:16,offset:4}" :md="{span:12,offset:6}">
                 <div class="com-list">
-                    <el-card class="com" shadow="hover" v-for="com in com_list" :key="com">
+                    <el-card class="com" shadow="hover" v-for="(com, index) in com_list" :key="com.id">
                         <div class="com-item">
                             <p class="com-people">
-                                <span>某某某某某某某某某</span>
-                                <span class="com-time">2019-2-18</span>
-                                <el-link :underline="false" class="com-praise"><img src="img/praise.png"></el-link>
+                                <span v-text="com.name"></span>
+                                <span class="com-time" v-text="timef(com.time)"></span>
+                                <!-- <el-link :underline="false" class="com-praise"><img src="/img/praise.png"></el-link> -->
                                 <!-- <el-link :underline="false" class="com-praise"><img src="img/nopraise.png"></el-link> -->
                             </p>
                 
-                            <p class="com_con" @click="toreply = true">评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论评论</p>
+                            <p class="com_con" @click="replyF(index, com.id, com.name)" v-text="com.content"></p>
                             <el-col :span="22" :offset="1">
-                                <div class="reply" v-for="reply in [0,1,2]" :key="reply">
+                                <div class="reply" v-for="reply in com.reply" :key="reply.id">
                                     <el-divider></el-divider>
                                     <p class="com-people">
-                                        <span>某某某某某某某某某</span>
+                                        <span v-text="reply.fname"></span>
                                         <span>@</span>
-                                        <span>某某某某某某某某某</span>
-                                        <span class="com-time">2019-2-18</span>
-                                        <el-link :underline="false" class="com-praise"><img src="img/praise.png"></el-link>
-                                        <!-- <el-link :underline="false" class="com-praise"><img src="img/nopraise.png"></el-link> -->
+                                        <span v-text="reply.tname"></span>
+                                        <span class="com-time" v-text="timef(reply.time)"></span>
                                     </p>
-                                    <p class="com_con" @click="toreply = true">内容内容内容内容内容内容内容内容内容</p>
+                                    <p class="com_con" @click="replyF(index, com.id, reply.fname)" v-text="reply.content"></p>
                                 </div>
                             </el-col>
                         </div>
@@ -110,7 +110,7 @@
             </el-col>
         </el-row>
 
-        <div  class="reply-form" id="reply-form" >
+        <div  class="reply-form" id="reply-form" v-cloak>
             <div class="reply-bc" @click="toreply = false" v-show="toreply"></div>
             <el-collapse-transition>
                 <div class="reply-bc-in" v-show="toreply">
@@ -127,11 +127,11 @@
                                         icon-color="red"
                                         title="昵称创建后不能更改"
                                         >
-                                        <el-input v-model="reply_form.name" :disabled="havname"  placeholder="游客××××" slot="reference"maxlength="10"></el-input>
+                                        <el-input v-model="reply_form.name" :disabled="havname"  placeholder="" slot="reference"maxlength="10"></el-input>
                                         </el-popconfirm>
                                     </el-form-item>
                                     <el-form-item>
-                                        <el-input type="textarea" rows="1" v-model="reply_form.reply" placeholder="@某某" ></el-input>
+                                        <el-input type="textarea" rows="1" v-model="reply_form.reply" :placeholder="'@' + reply_form.to" ></el-input>
                                     </el-form-item>
                                     <el-form-item>
                                         <el-button type="primary" @click="onSubmit" icon="el-icon-s-promotion" size="small"></el-button>
@@ -151,6 +151,15 @@
 
 
 </body>
+<script>
+    var path = document.location.pathname;
+    var pathary = path.split("/");
+    if(pathary.length > 2 && pathary[2] != ""){
+        var id = Number(pathary[2]);
+    }else{
+        var id = 0;
+    }
+</script>
 <script type="text/javascript" src="/js/comm/header.js" charset="utf-8"></script>
 <script>
     var doc = new Vue({
@@ -160,7 +169,7 @@
                     content:"",
                 }
             });
-    axios.get('/data/con/1')
+    axios.get('/data/con/' + id)
         .then(function (response) {
             var text = response.data.result;
             doc.content = text;
@@ -172,45 +181,173 @@
                 message: '加载失败，请稍后再试！',
                 type: 'error'
             });
-  });
- 
+});
+axios.get('/data/docinfo/' + id)
+    .then(function (response) {
+        var info = response.data.result;
+        var title = document.title;
+        document.title = info.title + "-" + title;
+    })
+    .catch(function (error) {
+
+});
+
+var comment;
   var form = new Vue({
     el:"#com-form",
     data:{
         havname: true,
         form:{
-            name:"某某某",
+            name:"",
             comment:""
         }
     },
 
     methods: {
       onSubmit() {
-        console.log('submit!');
+        var data = form.form;
+        if(data.name == "" || data.comment == ""){
+            form.$message({
+                showClose: true,
+                message: '评论和昵称不能为空',
+                type: 'error'
+            });
+            return;
+        }
+        var token = getCookie("token");
+        let param = new FormData();
+
+        param.append("token", token);
+        param.append("name", data.name);
+        param.append("content", data.comment);
+        param.append("did", id);
+        axios.post('/data/comment/in',param)
+        .then(function(response){
+            form.havname = true;
+            var data = {};
+            data['id'] = response.data.result;
+            data.name = form.form.name;
+            data.content = form.form.comment;
+            data.time = Date.parse(new Date())/1000;
+            comment.com_list.push(data);
+            form.form.comment = "";
+            form.$message({
+                showClose: true,
+                message: '留言成功',
+                type: 'success'
+            });
+        });
       }
     }
   });
 
-    var comment = new Vue({
+    comment = new Vue({
         el: '#comment',
         data: {
             comment:"热门评论：",
             loading:false,
-            com_list:[0,1,2],
+            com_list:[],
+            com_index: 0,
             havname: true,
+            havcomment: false,
             toreply:false,
             reply_form:{
-                name:"某某某",
-                reply:""
+                cid:0,
+                name:"",
+                to:"",
+                reply:"",
             },
         },
         methods: {
             onSubmit() {
-                console.log('submit!');
+                var data = comment.reply_form;
+                if(data.name == "" || data.comment == ""){
+                    form.$message({
+                        showClose: true,
+                        message: '回复和昵称不能为空',
+                        type: 'error'
+                    });
+                    return;
+                }
+                var token = getCookie("token");
+                let param = new FormData();
+
+                param.append("token", token);
+                param.append("fname", data.name);
+                param.append("tname", data.to);
+                param.append("content", data.reply);
+                param.append("cid", data.cid);
+                axios.post('/data/reply/in',param)
+                .then(function(response){
+                    comment.havname = true;
+                    var i = comment.com_index;
+                    var data = {};
+                    data['id'] = response.data.result;
+                    data.fname = comment.reply_form.name;
+                    data.tname = comment.reply_form.to;
+                    data.content = comment.reply_form.reply;
+                    data.time = Date.parse(new Date())/1000;
+                    comment.com_list[i].reply.push(data);
+                    comment.reply_form.reply = "";
+                    comment.$message({
+                        showClose: true,
+                        message: '留言成功',
+                        type: 'success'
+                    });
+                });
+            },
+
+            replyF:function($index, $cid, $tname){
+                comment.com_index = $index;
+                comment.reply_form.cid = $cid;
+                comment.reply_form.to = $tname;
+                comment.toreply = true;
+            },
+            timef: function (ctime) {
+                ctime *= 1000;
+                ctime = new Date(ctime);
+                var year=ctime.getFullYear();                   //取得4位数的年份
+                var month=ctime.getMonth()+1;           //取得日期中的月份，其中0表示1月，11表示12月
+                var date=ctime.getDate();                          //返回日期月份中的天数（1到31)
+                return year + "-" + month + "-" + date;
             }
-        }
+        },
+        watch: {
+            // 如果 `question` 发生改变，这个函数就会运行
+            com_list: function (newQuestion, oldQuestion) {
+                if(this.com_list.length > 0){
+                    this.havcomment = true;
+                }
+            }
+        },
     });
 
+    //获取评论列表
+    axios.get('/data/com/list', {params:{"id" : id}})
+        .then(function (response) {
+            comment.com_list = response.data.result;
+        })
+        .catch(function (error) {
+        });
+
+//获取用户名
+var token = getCookie("token");
+if(token == ""){
+    form.havname = false;
+    comment.havname = false;
+}else{
+    axios.get('/data/user/name', {params:{"token" : token}})
+        .then(function (response) {
+            var name = response.data.result;
+            form.form.name = name;
+            comment.reply_form.name = name;
+            form.havname = true;
+            comment.havname = true;
+        })
+        .catch(function (error) {
+
+  });
+}
 </script>
 <script type="text/javascript" src="/js/comm/footer.js" charset="utf-8"></script>
 </html>

@@ -9,6 +9,7 @@ use EasySwoole\Http\Response;
 use EasySwoole\WordsMatch\WordsMatchClient;
 use EasySwoole\WordsMatch\WordsMatchServer;
 use App\RpcService\Articles;
+use App\RpcService\Comments;
 use EasySwoole\Redis\Config\RedisConfig;
 use EasySwoole\RedisPool\RedisPool;
 use EasySwoole\RedisPool\Redis;
@@ -57,6 +58,7 @@ class EasySwooleEvent implements Event
         Rpc::getInstance($config);
         //添加服务
         Rpc::getInstance()->add(new Articles());
+        Rpc::getInstance()->add(new Comments());
         Rpc::getInstance()->attachToServer(ServerManager::getInstance()->getSwooleServer());
         
         /**

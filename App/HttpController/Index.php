@@ -31,13 +31,6 @@ class Index extends Controller
         $this->response()->write($html);
     }
 
-    function content()
-    {
-        $text = ReadDocs::getInstance()->readContent("notes/mess/ubuntu 16.04 server Selenium环境搭建.md");
-        $html = Parsedown::instance()->text($text); 
-        $this->writeJson(200, $html);
-    }
-
     function test()
     {
        /*

@@ -62,6 +62,8 @@ var head = new Vue({
 axios.get('/js/config/header.json')
     .then(function (response) {
         var data = response.data;
+        var title = document.title
+        document.title = title + data.title;
         head.$children[0].info = data;
     })
     .catch(function (error) {

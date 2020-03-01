@@ -1,3 +1,6 @@
+.content {
+    margin: 1em 0;
+}
 pre {
     padding: 1em;
     border: 1px solid #EBEEF5;
@@ -67,4 +70,15 @@ pre {
 
 .com_con {
     cursor: pointer;
+}
+
+p > img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.doc-info {
+    text-align: center;
+    font-size: 0.8em;
+    color: dimgrey;
 }
