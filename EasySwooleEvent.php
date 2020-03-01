@@ -6,7 +6,6 @@ use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
-use EasySwoole\WordsMatch\WordsMatchClient;
 use EasySwoole\WordsMatch\WordsMatchServer;
 use App\RpcService\Articles;
 use App\RpcService\Comments;

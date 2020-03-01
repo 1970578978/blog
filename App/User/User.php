@@ -157,9 +157,11 @@ class User
                         $v['reply'][] = json_decode($rv, true);
                     }
                 }
+                $v['reply'] = array_reverse($v['reply']);
                 $ret[] = $v;
             }
         }
+        $ret = array_reverse($ret);
         return $ret;
     }
 

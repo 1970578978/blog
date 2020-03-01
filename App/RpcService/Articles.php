@@ -76,4 +76,18 @@ class Articles extends AbstractService
             ReadDocs::getInstance()->setDoc($id, $info);
         }
     }
+
+    /**
+     * 下拉doc文档,读取文档
+     */
+    public function docInit()
+    {
+        $a = ReadDocs::getInstance()->gitInit();
+        $ret = ReadDocs::getInstance()->saveDocs();
+        $this->response()->setResult($ret);
+        $this->response()->setMsg('success');
+    }
+
+
+
 }

@@ -4,6 +4,7 @@ namespace App\RpcService;
 use EasySwoole\Rpc\AbstractService;
 use App\User\User;
 use App\RpcService\Rpcstatus;
+use EasySwoole\WordsMatch\WordsMatchClient;
 
 class Comments extends AbstractService
 {
@@ -11,6 +12,24 @@ class Comments extends AbstractService
     {
         return 'comment';
     }
+
+
+    /**
+     * 文档敏感词匹配
+     */
+    public function wordMatch(string $content)
+    {
+        $res = WordsMatchClient::getInstance()->search($content);
+        foreach($res as $v){
+            $tmp = "";
+            for($i = 0; $i < mb_strlen($v['word']); $i++){
+                $tmp .= "*";
+            }
+            $content = str_replace($v['word'], $tmp, $content);
+        }
+        return $content;
+   }
+
 
     /**
      * 给文档插入评论
@@ -34,6 +53,7 @@ class Comments extends AbstractService
             }else{
                 $uid = User::getInstance()->setUser($name);
             }
+            $con = $this->wordMatch($con);
             $cid = User::getInstance()->setCommet($did, $name, $con);
             $this->response()->setResult([$uid, $cid]);
             $this->response()->setMsg("success");
@@ -65,6 +85,7 @@ class Comments extends AbstractService
                 $fname = $name;
                 $fuid = User::getInstance()->setUser($name);
             }
+            $con = $this->wordMatch($con);
             $rid = User::getInstance()->setReply($cid, $fname, $tname, $con);
             $this->response()->setResult([$fuid, $rid]);
             $this->response()->setMsg("success");
