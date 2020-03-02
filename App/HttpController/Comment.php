@@ -60,9 +60,9 @@ class Comment extends Controller
         $post = $this->request()->getParsedBody();
         $token = $post['token'] ?? "";
         $name = $post['name'] ?? "";
-        $con =  $post['content'] ?? 0;
+        $con =  $post['content'] ?? "";
         $did = $post['did'] ?? null;
-        if(!is_numeric($did) || $con === 0 || ($token === "" && empty($name))){
+        if(!is_numeric($did) || $con === "" || ($token === "" && empty($name))){
             $this->writeJson(Status::CODE_BAD_REQUEST, [] , "content is empty");
             return false;
         }
@@ -148,9 +148,9 @@ class Comment extends Controller
         $token = $post['token'] ?? "";
         $fname = $post['fname'] ?? "";
         $tname = $post['tname'] ?? "";
-        $con =  $post['content'] ?? 0;
+        $con =  $post['content'] ?? "";
         $cid = $post['cid'] ?? null;
-        if(!is_numeric($cid) || $con === 0 || empty($tname) || ($token === "" && empty($fname))){
+        if(!is_numeric($cid) || $con === "" || empty($tname) || ($token === "" && empty($fname))){
             $this->writeJson(Status::CODE_BAD_REQUEST, [] , "content is empty");
             return false;
         }
